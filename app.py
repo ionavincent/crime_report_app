@@ -1,9 +1,11 @@
 from flask import Flask
 
-from database import db
-from endpoints.events import ns
-from restplus import api
 from config import configure_app
+from database import db
+from endpoints.reports import ns
+from restplus import api
+
+app = Flask(__name__)
 
 
 def init_app(app, config_type):
@@ -16,10 +18,10 @@ def init_app(app, config_type):
 
     if config_type == "testing":
         with app.app_context():
+            db.drop_all()
             db.create_all()
 
 
 if __name__ == "__main__":
-    app = Flask(__name__)
     init_app(app, "testing")
     app.run(host="0.0.0.0", port=8080)
