@@ -1,0 +1,92 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    </head>
+    <body>
+
+    <form id="parameters">
+        <select name="limit">
+            <option value="100">100</option>
+            <option value="500">500</option>
+            <option value="1000">1000</option>
+            <option value="-1">All</option>
+        </select>
+
+        <label>Order by:</label>
+        <select name="order_by">
+            <option value="id">ID</option>
+            <option value="crime_type">Crime Type</option>
+            <option value="year">Year</option>
+            <option value="month">Months</option>
+        </select>
+
+        <label>Year:</label>
+        <input type="text" name="year" />
+
+        <label>Crime Type:</label>
+        <input type="text" name="crime_type" />
+
+        <input type="submit" value="Search" />
+    </form>
+
+    <table id="table" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Year</th>
+                <th>Month</th>
+                <th>Crime Type</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>ID</th>
+                <th>Year</th>
+                <th>Month</th>
+                <th>Crime Type</th>
+            </tr>
+        </tfoot>
+    </table>
+
+     <script id="entry-template" type="text/x-handlebars-template">
+         <tr><td>{{id}}</td><td>{{year}}</td><td>{{month}}</td><td>{{crime_type}}</td></tr>
+     </script>
+
+     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.10/handlebars.min.js" integrity="sha384-NTlW/s8LREnFJH5uTJpSh7Nm3WD5/5iZR4G3LH8vxz/mn+TlV9XSM/hMW4L3Xxev" crossorigin="anonymous"></script>
+     <script>
+        $(document).ready(function() {
+            var renderEntry = Handlebars.compile($('#entry-template').html());
+            var parameters = $("#parameters");
+
+            parameters.submit(function(e) {
+                $("#table tbody tr").remove();
+
+                e.preventDefault();
+                e.returnValue = false;
+
+                var limit = parameters.find('select[name="limit"]').val();
+                var order_by = parameters.find('select[name="order_by"]').val();
+                var year_filter = parameters.find('input[name="year"]').val();
+                var crime_type_filter = parameters.find('input[name="crime_type"]').val();
+
+                $.getJSON("/reports?limit=" + limit + "&year=" + year_filter + "&crime_type=" + crime_type_filter + "&order_by=" + order_by, function(data) {
+                    $.each(data, (function(i, entry) {
+                        var entryHtml = renderEntry(entry);
+                        $("#table tbody").append(entryHtml);
+                    }));
+                });
+            });
+        });
+        </script>
+    </body>
+</html>

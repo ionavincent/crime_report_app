@@ -183,6 +183,16 @@ class TimeReportsCase(unittest.TestCase):
         year = self.ingestor._get_year("2015-3")
         self.assertEqual(year, "2015")
 
+    def test_get_sorted_by_crime_type(self):
+        pass
+
+    def test_get_sorted_by_year(self):
+        pass
+
+    def test_get_sorted_by_month(self):
+        pass
+
+
     def test_get_reports(self):
         # populate db with dummy data
         self.ingestor.ingest_csv(self.test_csv)

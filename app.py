@@ -5,7 +5,12 @@ from database import db
 from endpoints.reports import ns
 from restplus import api
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="web")
+
+
+@app.route('/view')
+def view():
+    return app.send_static_file("index.html")
 
 
 def init_app(app, config_type):

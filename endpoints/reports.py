@@ -17,6 +17,10 @@ class ReportCollection(Resource):
         """
         Returns a list of all crime types, filtered by year, if provided
         """
+        # TODO: Replace with parameters (api.parameters)!
+        limit = request.args.get("limit")
+        limit = int(limit)
+
         valid_orderings = {
             "crime_type": CrimeReport.crime_type,
             "year": CrimeReport.year,
@@ -36,12 +40,12 @@ class ReportCollection(Resource):
 
         filters = []
         for parameter_name, value in request.args.items():
-            if parameter_name in valid_filters:
+            if parameter_name in valid_filters and len(value) > 0:
                 filters.append(valid_filters[parameter_name](value))
 
         reports = (CrimeReport.query.filter(*filters)
                    .order_by(ordering)
-                   .limit(100)
+                   .limit(limit)
                    .all())
 
         return reports, 200
