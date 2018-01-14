@@ -67,7 +67,9 @@ class CrimeDataIngestor(object):
     def _extract_zip(self, zip_file_path):
         """Extract all CSVs in provided ZIP file into memory"""
         input_zip = zipfile.ZipFile(zip_file_path)
-        return [CsvFile(name, io.StringIO(input_zip.read(name).decode("utf-8"))) for name in input_zip.namelist() if name.endswith(".csv")]
+        return [CsvFile(name,
+                        io.StringIO(input_zip.read(name).decode("utf-8")))
+                for name in input_zip.namelist() if name.endswith(".csv")]
 
     def _get_month(self, date):
         return date.split("-")[1]
@@ -76,12 +78,12 @@ class CrimeDataIngestor(object):
         return date.split("-")[0]
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--csv", help="the file path to the crime data csv")
-    parser.add_argument("--zip", help="the file path to a zip containing crime "
-                                    "report csvs, in dated directories")
+    parser.add_argument("--zip", help="the file path to a zip containing crime"
+                        " report csvs, in dated directories")
     args = parser.parse_args()
 
     with app.app_context():

@@ -9,6 +9,7 @@ class Config:
 class TestConfig(Config):
     TESTING = True
 
+
 class DefaultConfig(Config):
     TESTING = False
 
@@ -17,6 +18,7 @@ config = {
     "default": DefaultConfig,
     "testing": TestConfig
 }
+
 
 def configure_app(app, config_type):
     app.config.from_object(config[config_type])

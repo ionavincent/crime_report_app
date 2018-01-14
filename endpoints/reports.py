@@ -39,7 +39,6 @@ class ReportCollection(Resource):
             if parameter_name in valid_filters:
                 filters.append(valid_filters[parameter_name](value))
 
-
         reports = (CrimeReport.query.filter(*filters)
                    .order_by(ordering)
                    .limit(100)

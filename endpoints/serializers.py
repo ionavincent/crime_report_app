@@ -3,8 +3,8 @@ from flask_restplus import fields
 from restplus import api
 
 report = api.model('report', {
-    "id": fields.Integer(readOnly=True, description='The unique identifier for '
-                         'an event'),
+    "id": fields.Integer(readOnly=True, description='The unique identifier '
+                         'for a crime report'),
     "crime_id": fields.String(description=''),
     "month": fields.String(description=''),
     "year": fields.String(description=''),

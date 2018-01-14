@@ -14,88 +14,116 @@ class TimeReportsCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.expected_dict_reports = [{'context': '',
-                      'crime_id': '',
-                      'crime_type': 'Anti-social behaviour',
-                      'falls_within': 'Devon & Cornwall Police',
-                      'last_outcome': '',
-                      'latitude': 50.8308,
-                      'location': 'On or near Hartland Terrace',
-                      'longitude': -4.546074,
-                      'lsoa_code': 'E01018936',
-                      'lsoa_name': 'Cornwall 001A',
-                      'month': '11',
-                      'reported_by': 'Devon & Cornwall Police',
-                      'year': '2016'},
-                     {'context': '',
-                      'crime_id': '38f0b9485384b64c9c4c841666c923b95d3aa8f631cc65f92234ac25a154fe08',
-                      'crime_type': 'Violence and sexual offences',
-                      'falls_within': 'Devon & Cornwall Police',
-                      'last_outcome': 'Unable to prosecute suspect',
-                      'latitude': 50.828441,
-                      'location': 'On or near Church Path',
-                      'longitude': -4.551129,
-                      'lsoa_code': 'E01018936',
-                      'lsoa_name': 'Cornwall 001A',
-                      'month': '11',
-                      'reported_by': 'Devon & Cornwall Police',
-                      'year': '2016'},
-                     {'context': '',
-                      'crime_id': '8fd3e0b78717ba4b7641f41dddea2802a768c0346c24c28208d536597a036a51',
-                      'crime_type': 'Violence and sexual offences',
-                      'falls_within': 'Devon & Cornwall Police',
-                      'last_outcome': 'Offender given suspended prison sentence',
-                      'latitude': 50.635262,
-                      'location': 'On or near Edymeade Court',
-                      'longitude': -4.35589,
-                      'lsoa_code': 'E01018947',
-                      'lsoa_name': 'Cornwall 005B',
-                      'month': '11',
-                      'reported_by': 'Devon & Cornwall Police',
-                      'year': '2016'}]
+                                      'crime_id': '',
+                                      'crime_type': 'Anti-social behaviour',
+                                      'falls_within': 'Devon & Cornwall '
+                                                      'Police',
+                                      'last_outcome': '',
+                                      'latitude': 50.8308,
+                                      'location': 'On or near Hartland '
+                                                  'Terrace',
+                                      'longitude': -4.546074,
+                                      'lsoa_code': 'E01018936',
+                                      'lsoa_name': 'Cornwall 001A',
+                                      'month': '11',
+                                      'reported_by': 'Devon & Cornwall '
+                                                     'Police',
+                                      'year': '2016'},
+                                     {'context': '',
+                                      'crime_id': '38f0b9485384b64c9c4c841666'
+                                                  'c923b95d3aa8f631cc65f92234'
+                                                  'ac25a154fe08',
+                                      'crime_type': 'Violence and sexual '
+                                                    'offences',
+                                      'falls_within': 'Devon & Cornwall '
+                                                      'Police',
+                                      'last_outcome': 'Unable to prosecute '
+                                                      'suspect',
+                                      'latitude': 50.828441,
+                                      'location': 'On or near Church Path',
+                                      'longitude': -4.551129,
+                                      'lsoa_code': 'E01018936',
+                                      'lsoa_name': 'Cornwall 001A',
+                                      'month': '11',
+                                      'reported_by': 'Devon & Cornwall Police',
+                                      'year': '2016'},
+                                     {'context': '',
+                                      'crime_id': '8fd3e0b78717ba4b7641f41ddd'
+                                                  'ea2802a768c0346c24c28208d5'
+                                                  '36597a036a51',
+                                      'crime_type': 'Violence and sexual '
+                                                    'offences',
+                                      'falls_within': 'Devon & Cornwall '
+                                                      'Police',
+                                      'last_outcome': 'Offender given '
+                                                      'suspended prison '
+                                                      'sentence',
+                                      'latitude': 50.635262,
+                                      'location': 'On or near Edymeade Court',
+                                      'longitude': -4.35589,
+                                      'lsoa_code': 'E01018947',
+                                      'lsoa_name': 'Cornwall 005B',
+                                      'month': '11',
+                                      'reported_by': 'Devon & Cornwall '
+                                                     'Police',
+                                      'year': '2016'}]
 
         cls.expected_responses = {1: {'context': '',
-                                     'crime_id': '',
-                                     'crime_type': 'Anti-social behaviour',
-                                     'falls_within': 'Devon & Cornwall Police',
-                                     'id': 1,
-                                     'last_outcome': '',
-                                     'latitude': 50.8308,
-                                     'location': 'On or near Hartland Terrace',
-                                     'longitude': -4.546074,
-                                     'lsoa_code': 'E01018936',
-                                     'lsoa_name': 'Cornwall 001A',
-                                     'month': '11',
-                                     'reported_by': 'Devon & Cornwall Police',
-                                     'year': '2016'},
-                                    2: {'context': '',
-                                     'crime_id': '38f0b9485384b64c9c4c841666c923b95d3aa8f631cc65f92234ac25a154fe08',
-                                     'crime_type': 'Violence and sexual offences',
-                                     'falls_within': 'Devon & Cornwall Police',
-                                     'id': 2,
-                                     'last_outcome': 'Unable to prosecute suspect',
-                                     'latitude': 50.828441,
-                                     'location': 'On or near Church Path',
-                                     'longitude': -4.551129,
-                                     'lsoa_code': 'E01018936',
-                                     'lsoa_name': 'Cornwall 001A',
-                                     'month': '11',
-                                     'reported_by': 'Devon & Cornwall Police',
-                                     'year': '2016'},
-                                    3: {'context': '',
-                                     'crime_id': '8fd3e0b78717ba4b7641f41dddea2802a768c0346c24c28208d536597a036a51',
-                                     'crime_type': 'Violence and sexual offences',
-                                     'falls_within': 'Devon & Cornwall Police',
-                                     'id': 3,
-                                     'last_outcome': 'Offender given suspended prison sentence',
-                                     'latitude': 50.635262,
-                                     'location': 'On or near Edymeade Court',
-                                     'longitude': -4.35589,
-                                     'lsoa_code': 'E01018947',
-                                     'lsoa_name': 'Cornwall 005B',
-                                     'month': '11',
-                                     'reported_by': 'Devon & Cornwall Police',
-                                     'year': '2016'}}
-
+                                      'crime_id': '',
+                                      'crime_type': 'Anti-social behaviour',
+                                      'falls_within': 'Devon & Cornwall '
+                                                      'Police',
+                                      'id': 1,
+                                      'last_outcome': '',
+                                      'latitude': 50.8308,
+                                      'location': 'On or near Hartland '
+                                                  'Terrace',
+                                      'longitude': -4.546074,
+                                      'lsoa_code': 'E01018936',
+                                      'lsoa_name': 'Cornwall 001A',
+                                      'month': '11',
+                                      'reported_by': 'Devon & Cornwall '
+                                                     'Police',
+                                      'year': '2016'},
+                                  2: {'context': '',
+                                      'crime_id': '38f0b9485384b64c9c4c841666'
+                                                  'c923b95d3aa8f631cc65f9223'
+                                                  '4ac25a154fe08',
+                                      'crime_type': 'Violence and sexual '
+                                                    'offences',
+                                      'falls_within': 'Devon & Cornwall '
+                                                      'Police',
+                                      'id': 2,
+                                      'last_outcome': 'Unable to prosecute '
+                                                      'suspect',
+                                      'latitude': 50.828441,
+                                      'location': 'On or near Church Path',
+                                      'longitude': -4.551129,
+                                      'lsoa_code': 'E01018936',
+                                      'lsoa_name': 'Cornwall 001A',
+                                      'month': '11',
+                                      'reported_by': 'Devon & Cornwall Police',
+                                      'year': '2016'},
+                                  3: {'context': '',
+                                      'crime_id': '8fd3e0b78717ba4b7641f41ddd'
+                                                  'ea2802a768c0346c24c28208d5'
+                                                  '36597a036a51',
+                                      'crime_type': 'Violence and sexual '
+                                                    'offences',
+                                      'falls_within': 'Devon & Cornwall '
+                                                      'Police',
+                                      'id': 3,
+                                      'last_outcome': 'Offender given '
+                                                      'suspended prison '
+                                                      'sentence',
+                                      'latitude': 50.635262,
+                                      'location': 'On or near Edymeade Court',
+                                      'longitude': -4.35589,
+                                      'lsoa_code': 'E01018947',
+                                      'lsoa_name': 'Cornwall 005B',
+                                      'month': '11',
+                                      'reported_by': 'Devon & Cornwall Police',
+                                      'year': '2016'}}
 
     def setUp(self):
         self.test_csv = CsvFile(
