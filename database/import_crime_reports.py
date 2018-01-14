@@ -1,13 +1,17 @@
 import argparse
 import csv
+import io
 import logging
-import os
 import zipfile
+from collections import namedtuple
 
 from app import app
 from config import configure_app
 from .models import CrimeReport
 from . import db
+
+
+CsvFile = namedtuple("CsvFile", ["name", "reader"])
 
 
 class CrimeDataIngestor(object):
@@ -17,26 +21,15 @@ class CrimeDataIngestor(object):
         logging.basicConfig(level=logging.INFO)
 
     def import_data(self, zip_file_path):
-        unziped_dir = self._unzip_data(zip_file_path)
+        for csv_file in self._extract_zip(zip_file_path):
+            self.ingest_csv(csv_file)
 
-        paths = self._get_all_csv_paths(unziped_dir)
-
-        for p in paths:
-            self.ingest_csv(p)
-
-    def ingest_csv(self, csv_file_path):
-        logging.info(("ingesting: {}").format(csv_file_path))
-        reports = self._get_dict_representations(csv_file_path)
+    def ingest_csv(self, csv_file):
+        logging.info(("ingesting: {}").format(csv_file.name))
+        reports = self._get_content_list(csv_file)
         self._bulk_import_reports(reports)
 
-    def _get_dict_representations(self, csv_file_path):
-
-        with open(csv_file_path) as csv_file:
-            reports = self._get_content_list(csv_file)
-
-        return reports
-
-    def _get_content_list(self, file_handler):
+    def _get_content_list(self, csv_file):
         reports = []
         fieldnames = ("crime_id",
                       "date",
@@ -52,9 +45,9 @@ class CrimeDataIngestor(object):
                       "context")
 
         # skip the first line of the file containing the headers
-        file_handler.readline()
+        csv_file.reader.readline()
 
-        reader = csv.DictReader(file_handler, fieldnames=fieldnames)
+        reader = csv.DictReader(csv_file.reader, fieldnames=fieldnames)
 
         for row in reader:
             row["year"] = self._get_year(row["date"])
@@ -68,32 +61,13 @@ class CrimeDataIngestor(object):
 
         return reports
 
-    def _get_all_csv_paths(self, top_level_dir):
-        all_paths = []
-
-        for root, dir, files in os.walk(top_level_dir):
-            if root == top_level_dir:
-                continue
-
-            for f in files:
-                if f.endswith('csv'):
-                    all_paths.append(os.path.join(root, f))
-
-        return all_paths
-
     def _bulk_import_reports(self, reports):
         self.db.engine.execute(CrimeReport.__table__.insert(), reports)
 
-    def _unzip_data(self, zip_file_path):
-        zip_ref = zipfile.ZipFile(zip_file_path, 'r')
-
-        dirname, filename = os.path.split(os.path.abspath(__file__))
-        temp_dir = os.path.join(dirname, "temp")
-
-        zip_ref.extractall(temp_dir)
-        zip_ref.close()
-
-        return temp_dir
+    def _extract_zip(self, zip_file_path):
+        """Extract all CSVs in provided ZIP file into memory"""
+        input_zip = zipfile.ZipFile(zip_file_path)
+        return [CsvFile(name, io.StringIO(input_zip.read(name).decode("utf-8"))) for name in input_zip.namelist() if name.endswith(".csv")]
 
     def _get_month(self, date):
         return date.split("-")[1]

@@ -6,23 +6,13 @@ from flask import Flask
 
 from app import init_app
 from database import db
-from database.import_crime_reports import CrimeDataIngestor
+from database.import_crime_reports import CsvFile, CrimeDataIngestor
 
 
-class CrimeReportsCase(unittest.TestCase):
+class TimeReportsCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.test_csv = os.path.join(os.path.dirname(__file__),
-                                    "data",
-                                    "crime_reports.csv")
-        cls.test_csvs = os.path.join(os.path.dirname(__file__),
-                                     "data",
-                                     "multiple_csvs")
-        cls.test_zip = os.path.join(os.path.dirname(__file__),
-                                    "data",
-                                    "multiple_csvs.zip")
-
         cls.expected_dict_reports = [{'context': '',
                       'crime_id': '',
                       'crime_type': 'Anti-social behaviour',
@@ -108,6 +98,13 @@ class CrimeReportsCase(unittest.TestCase):
 
 
     def setUp(self):
+        self.test_csv = CsvFile(
+            name="crime_reports.csv",
+            reader=open(os.path.join(os.path.dirname(__file__),
+                                     "data",
+                                     "crime_reports.csv"), "r")
+        )
+
         self.test_app = Flask(__name__)
         self.app_context = self.test_app.app_context()
         self.app_context.push()
@@ -124,19 +121,12 @@ class CrimeReportsCase(unittest.TestCase):
         db.session.remove()
         db.drop_all()
 
-    def add_test_data(self):
-        self.ingestor.ingest_csv(os.path.join(self.test_csv))
-
-    def test_get_dict_representations(self):
-        report_dicts = self.ingestor._get_dict_representations(self.test_csv)
-        for got, expected in zip(report_dicts, self.expected_dict_reports):
-            self.assertDictEqual(got, expected)
-
     def test_bulk_import_reports(self):
-        report_dicts = self.ingestor._get_dict_representations(self.test_csv)
+        report_dicts = self.ingestor._get_content_list(self.test_csv)
         self.ingestor._bulk_import_reports(report_dicts)
 
         response = self.client.get("/reports")
+
         self.assertEqual(len(json.loads(response.data)), 3)
         response_json = json.loads(response.data)
 
@@ -154,50 +144,20 @@ class CrimeReportsCase(unittest.TestCase):
             self.assertDictEqual(report, self.expected_responses[report["id"]])
 
     def test_get_content_list(self):
-        with open(self.test_csv) as csv_file:
-            reports = self.ingestor._get_content_list(csv_file)
-
+        reports = self.ingestor._get_content_list(self.test_csv)
         self.assertEqual(reports, self.expected_dict_reports)
-
-    def test_get_all_csv_paths(self):
-        paths = self.ingestor._get_all_csv_paths(self.test_csvs)
-        expected = [os.path.join(os.path.dirname(__file__),
-                                 "data",
-                                 "multiple_csvs",
-                                 "2016-11",
-                                 "2016-11-devon-and-cornwall-street.csv"),
-                    os.path.join(os.path.dirname(__file__),
-                                 "data",
-                                 "multiple_csvs",
-                                 "2016-12",
-                                 "2016-12-devon-and-cornwall-street.csv"),
-                    os.path.join(os.path.dirname(__file__),
-                                 "data",
-                                 "multiple_csvs",
-                                 "2017-01",
-                                 "2017-01-devon-and-cornwall-street.csv")]
-
-        self.assertEqual((expected), (paths))
-
-    def test_unzip_data(self):
-        self.ingestor._unzip_data(self.test_zip)
-        #TODO: Mocking...
-
-    def test_import_data(self):
-        self.ingestor.import_data(self.test_zip)
-        #TODO: Mocking...
 
     def test_get_month(self):
         month = self.ingestor._get_month("2015-3")
         self.assertEqual(month, "3")
 
     def test_get_year(self):
-        month = self.ingestor._get_month("2015-3")
-        self.assertEqual(month, "2015")
+        year = self.ingestor._get_year("2015-3")
+        self.assertEqual(year, "2015")
 
     def test_get_reports(self):
         # populate db with dummy data
-        self.add_test_data()
+        self.ingestor.ingest_csv(self.test_csv)
 
         # validate returned data is correct
         response = self.client.get("/reports")

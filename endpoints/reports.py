@@ -17,38 +17,32 @@ class ReportCollection(Resource):
         """
         Returns a list of all crime types, filtered by year, if provided
         """
-        ordering_parm = request.args.get("order_by") or 'crime_type'
+        valid_orderings = {
+            "crime_type": CrimeReport.crime_type,
+            "year": CrimeReport.year,
+            "month": CrimeReport.month
+        }
 
-        if 'year' in request.args:
-            reports = (CrimeReport.query.filter_by(year=request.args['year'])
-                                        .order_by(getattr(CrimeReport, ordering_parm))
-                                        .all())
-        if 'month' in request.args:
-            reports = CrimeReport.query.filter_by(
-                    year=request.args['month']).all()
-        if 'month' and 'year' in request.args:
-            reports = CrimeReport.query.filter_by(
-                    month=request.args['month']).filter_by(year=
-                    request.args['year']).all()
-        if 'crime_type' in request.args:
-            reports = (CrimeReport.query.filter_by(crime_type=request.args['crime_type'])
-                                        .order_by(getattr(CrimeReport, ordering_parm))
-                                        .all())
+        valid_filters = {
+            "year": lambda x: CrimeReport.year.like(int(x)),
+            "month": lambda x: CrimeReport.month.like(int(x)),
+            "crime_type": lambda x: CrimeReport.crime_type.like(x)
+        }
 
-        else:
-            reports = CrimeReport.query.limit(1000).all()
+        ordering = valid_orderings.get(
+            request.args.get("order_by"),
+            CrimeReport.crime_type
+        )
 
+        filters = []
+        for parameter_name, value in request.args.items():
+            if parameter_name in valid_filters:
+                filters.append(valid_filters[parameter_name](value))
+
+
+        reports = (CrimeReport.query.filter(*filters)
+                   .order_by(ordering)
+                   .limit(100)
+                   .all())
 
         return reports, 200
-
-
-@ns.route('/<int:id>')
-class ReportItem(Resource):
-
-    @ns.marshal_with(report)
-    def get(self, id):
-        """
-        Returns the report with the given id
-        """
-        report = CrimeReport.query.filter_by(id=id).one()
-        return report, 200
