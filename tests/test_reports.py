@@ -9,7 +9,7 @@ from database import db
 from database.import_crime_reports import CrimeDataIngestor
 
 
-class TimeReportsCase(unittest.TestCase):
+class CrimeReportsCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -137,8 +137,6 @@ class TimeReportsCase(unittest.TestCase):
         self.ingestor._bulk_import_reports(report_dicts)
 
         response = self.client.get("/reports")
-        with open("/tmp/debug.txt", "w") as f:
-            f.write(str(response))
         self.assertEqual(len(json.loads(response.data)), 3)
         response_json = json.loads(response.data)
 
@@ -183,6 +181,10 @@ class TimeReportsCase(unittest.TestCase):
 
     def test_unzip_data(self):
         self.ingestor._unzip_data(self.test_zip)
+        #TODO: Mocking...
+
+    def test_import_data(self):
+        self.ingestor.import_data(self.test_zip)
         #TODO: Mocking...
 
     def test_get_month(self):

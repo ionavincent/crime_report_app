@@ -3,7 +3,6 @@ from flask_restplus import Resource
 
 from restplus import api
 from endpoints.serializers import report
-from database import db
 from database.models import CrimeReport
 
 ns = api.namespace('reports',
@@ -37,15 +36,10 @@ class ReportCollection(Resource):
                                         .all())
 
         else:
-            import time
-            start = time.time()
             reports = CrimeReport.query.limit(1000).all()
-            duration = time.time() - start
-            print("Took {} seconds".format(duration))
+
 
         return reports, 200
-
-
 
 
 @ns.route('/<int:id>')

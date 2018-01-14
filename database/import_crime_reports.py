@@ -6,7 +6,7 @@ import zipfile
 
 from app import app
 from config import configure_app
-from models import CrimeReport
+from .models import CrimeReport
 from . import db
 
 
