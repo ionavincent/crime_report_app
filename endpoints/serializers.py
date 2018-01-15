@@ -5,18 +5,17 @@ from restplus import api
 report = api.model('report', {
     "id": fields.Integer(readOnly=True, description='The unique identifier '
                          'for a crime report'),
-    "crime_id": fields.String(description=''),
-    "month": fields.String(description=''),
-    "year": fields.String(description=''),
-    "reported_by": fields.String(description=''),
-    "falls_within": fields.String(description=''),
-    "longitude": fields.Float(description=''),
-    "latitude": fields.Float(description=''),
-    "location": fields.String(description=''),
-    "lsoa_code": fields.String(description=''),
-    "lsoa_name": fields.String(description=''),
-    "crime_type": fields.String(description=''),
-    "last_outcome": fields.String(description=''),
-    "context": fields.String(description='')
-
+    "crime_id": fields.String(description='Crime ID'),
+    "month": fields.Integer(description='Month'),
+    "year": fields.Integer(description='Year'),
+    "reported_by": fields.String(description='Reported By'),
+    "falls_within": fields.String(description='Falls Within'),
+    "longitude": fields.Float(description='Longitude'),
+    "latitude": fields.Float(description='Latitude'),
+    "location": fields.String(description='Location'),
+    "lsoa_code": fields.String(description='LSOA Code'),
+    "lsoa_name": fields.String(description='LSOA Name'),
+    "crime_type": fields.String(description='Crime Type'),
+    "last_outcome": fields.String(description='Last Outcome'),
+    "context": fields.String(description='Context')
 })

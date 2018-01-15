@@ -28,5 +28,5 @@ def init_app(app, config_type):
 
 
 if __name__ == "__main__":
-    init_app(app, "testing")
+    init_app(app, "default")
     app.run(host="0.0.0.0", port=8080)

@@ -21,15 +21,32 @@ class CrimeDataIngestor(object):
         logging.basicConfig(level=logging.INFO)
 
     def import_data(self, zip_file_path):
+        """
+        Imports the crime reports in the contained CSVs into the database
+        :param zip_file_path: The full file path to a zip containing crime
+        report CSVs
+        :return: None
+        """
         for csv_file in self._extract_zip(zip_file_path):
             self.ingest_csv(csv_file)
 
     def ingest_csv(self, csv_file):
+        """
+        Ingests each crime report in the given CSV into the database
+        :param csv_file: The CsvFile tuple containing crime data
+        :return: None
+        """
         logging.info(("ingesting: {}").format(csv_file.name))
         reports = self._get_content_list(csv_file)
         self._bulk_import_reports(reports)
 
     def _get_content_list(self, csv_file):
+        """
+        Extracts all crime reports in the given csv into memory
+        :param csv_file: The CsvFile tuple containing crime data
+        :return: A list of dictionaries containing the data for each crime
+        report
+        """
         reports = []
         fieldnames = ("crime_id",
                       "date",
@@ -62,10 +79,21 @@ class CrimeDataIngestor(object):
         return reports
 
     def _bulk_import_reports(self, reports):
+        """
+        Inserts a list of crime reports in to the database
+        :param reports: A list of dictionaries containing all fields and values
+        for each crime report
+        :return: None
+        """
         self.db.engine.execute(CrimeReport.__table__.insert(), reports)
 
     def _extract_zip(self, zip_file_path):
-        """Extract all CSVs in provided ZIP file into memory"""
+        """
+        Extracts all CSVs in provided ZIP file into memory
+        :param zip_file_path: The full file path to the zip file
+        :return: A list of CsvFile tuples containing the file name and its
+        file handler
+        """
         input_zip = zipfile.ZipFile(zip_file_path)
         return [CsvFile(name,
                         io.StringIO(input_zip.read(name).decode("utf-8")))

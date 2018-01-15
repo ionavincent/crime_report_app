@@ -2,6 +2,9 @@ from database import db
 
 
 class CrimeReport(db.Model):
+    """
+    SQLAlchemy model for the database entry for each crime report
+    """
     __tablename__ = "CrimeReport"
     id = db.Column(db.Integer, primary_key=True)
     crime_id = db.Column(db.String(255))
@@ -20,12 +23,13 @@ class CrimeReport(db.Model):
 
     @staticmethod
     def from_json(data):
+        """
+        Creates a CrimeReport object from the supplied json
+        :param data: json
+        :return: CrimeReport
+        """
         name = data.get("name")
         type = data.get("type")
         if not name:
             raise RuntimeError("No event name given")
         return CrimeReport(name=name, type=type)
-
-    def to_json(self):
-        return {"name": self.name,
-                "type": self.type}

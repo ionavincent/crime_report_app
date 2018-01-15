@@ -126,7 +126,7 @@
         function getParameter(form, name) {
             var value = form.find('select[name="'+ name + '"]').val();
             if (value) {
-                return value;
+                return encodeURI(value);
             }
             return form.find('input[name="'+ name + '"]').val();
         }
