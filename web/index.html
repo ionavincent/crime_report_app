@@ -11,30 +11,71 @@
     </head>
     <body>
 
-    <form id="parameters">
-        <select name="limit">
-            <option value="100">100</option>
-            <option value="500">500</option>
-            <option value="1000">1000</option>
-            <option value="-1">All</option>
-        </select>
+    <div id="search" class="bg-faded">
+        <form id="parameters">
+            <select name="limit">
+                <option value="100">100</option>
+                <option value="500">500</option>
+                <option value="1000">1000</option>
+                <option value="-1">All</option>
+            </select>
 
-        <label>Order by:</label>
-        <select name="order_by">
-            <option value="id">ID</option>
-            <option value="crime_type">Crime Type</option>
-            <option value="year">Year</option>
-            <option value="month">Months</option>
-        </select>
+            <label>Order by:</label>
+            <select name="order_by">
+                <option value="id">ID</option>
+                <option value="crime_type">Crime Type</option>
+                <option value="year">Year</option>
+                <option value="month">Months</option>
+            </select>
 
-        <label>Year:</label>
-        <input type="text" name="year" />
+            <label>Crime ID:</label>
+            <input type="text" name="crime_id" />
 
-        <label>Crime Type:</label>
-        <input type="text" name="crime_type" />
+            <label>Year:</label>
+            <input type="text" name="year" />
 
-        <input type="submit" value="Search" />
-    </form>
+            <label>Month:</label>
+            <input type="text" name="month" />
+
+            <label>Reported by:</label>
+            <input type="text" name="reported_by" />
+
+            <br/>
+
+            <label>Falls within:</label>
+            <input type="text" name="falls_within" />
+
+            <label>Longitude</label>
+            <input type="text" name="longitude" />
+
+            <label>Latitude:</label>
+            <input type="text" name="latitude" />
+
+            <label>Location:</label>
+            <input type="text" name="location" />
+
+            <br/>
+
+            <label>LSOA code:</label>
+            <input type="text" name="lsoa_code" />
+
+            <label>LSOA name:</label>
+            <input type="text" name="lsoa_name" />
+
+            <label>Crime type:</label>
+            <input type="text" name="crime_type" />
+
+            <label>Last outcome:</label>
+            <input type="text" name="last_outcome" />
+
+            <label>Context:</label>
+            <input type="text" name="context" />
+
+            <br/>
+
+            <input type="submit" value="Search" />
+        </form>
+    </div>
 
     <table id="table" class="display" cellspacing="0" width="100%">
         <thead>
@@ -42,7 +83,16 @@
                 <th>ID</th>
                 <th>Year</th>
                 <th>Month</th>
-                <th>Crime Type</th>
+                <th>Reported by</th>
+                <th>Falls within</th>
+                <th>Longitude</th>
+                <th>Latitude</th>
+                <th>Location</th>
+                <th>LSAO code</th>
+                <th>LSAO name</th>
+                <th>Crime type</th>
+                <th>Last outcome</th>
+                <th>Context</th>
             </tr>
         </thead>
         <tbody>
@@ -52,34 +102,75 @@
                 <th>ID</th>
                 <th>Year</th>
                 <th>Month</th>
-                <th>Crime Type</th>
+                <th>Reported by</th>
+                <th>Falls within</th>
+                <th>Longitude</th>
+                <th>Latitude</th>
+                <th>Location</th>
+                <th>LSAO code</th>
+                <th>LSAO name</th>
+                <th>Crime type</th>
+                <th>Last outcome</th>
+                <th>Context</th>
             </tr>
         </tfoot>
     </table>
 
      <script id="entry-template" type="text/x-handlebars-template">
-         <tr><td>{{id}}</td><td>{{year}}</td><td>{{month}}</td><td>{{crime_type}}</td></tr>
+         <tr><td>{{id}}</td><td>{{year}}</td><td>{{month}}</td><td>{{reported_by}}</td><td>{{falls_within}}</td><td>{{longitude}}</td><td>{{latitude}}</td><td>{{location}}</td><td>{{lsao_code}}</td><td>{{lsao_name}}</td><td>{{crime_type}}</td><td>{{last_outcome}}</td><td>{{context}}</td></tr>
      </script>
 
      <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
      <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.10/handlebars.min.js" integrity="sha384-NTlW/s8LREnFJH5uTJpSh7Nm3WD5/5iZR4G3LH8vxz/mn+TlV9XSM/hMW4L3Xxev" crossorigin="anonymous"></script>
      <script>
+        function getParameter(form, name) {
+            var value = form.find('select[name="'+ name + '"]').val();
+            if (value) {
+                return value;
+            }
+            return form.find('input[name="'+ name + '"]').val();
+        }
+
+        function constructQueryString(parameters) {
+            for (key in parameters) {
+              if (parameters[key] == null || parameters[key] == "") {
+                 delete parameters[key];
+              }
+            }
+            return $.param(parameters);
+        }
+
         $(document).ready(function() {
             var renderEntry = Handlebars.compile($('#entry-template').html());
-            var parameters = $("#parameters");
+            var form = $("#parameters");
 
-            parameters.submit(function(e) {
-                $("#table tbody tr").remove();
-
+            form.submit(function(e) {
                 e.preventDefault();
                 e.returnValue = false;
 
-                var limit = parameters.find('select[name="limit"]').val();
-                var order_by = parameters.find('select[name="order_by"]').val();
-                var year_filter = parameters.find('input[name="year"]').val();
-                var crime_type_filter = parameters.find('input[name="crime_type"]').val();
+                $("#table tbody tr").remove();
 
-                $.getJSON("/reports?limit=" + limit + "&year=" + year_filter + "&crime_type=" + crime_type_filter + "&order_by=" + order_by, function(data) {
+                var parameters = {
+                    limit: getParameter(form, "limit"),
+                    order_by: getParameter(form, "order_by"),
+                    crime_id: getParameter(form, "crime_id"),
+                    year: getParameter(form, "year"),
+                    month: getParameter(form, "month"),
+                    reported_by: getParameter(form, "reported_by"),
+                    falls_within: getParameter(form, "falls_within"),
+                    longitude: getParameter(form, "longitude"),
+                    latitude: getParameter(form, "latitude"),
+                    location: getParameter(form, "location"),
+                    lsoa_code: getParameter(form, "lsoa_code"),
+                    lsoa_name: getParameter(form, "lsoa_name"),
+                    crime_type: getParameter(form, "crime_type"),
+                    last_outcome: getParameter(form, "last_outcome"),
+                    context: getParameter(form, "context")
+                };
+
+                console.log(parameters);
+
+                $.getJSON("/reports?" + constructQueryString(parameters), function(data) {
                     $.each(data, (function(i, entry) {
                         var entryHtml = renderEntry(entry);
                         $("#table tbody").append(entryHtml);
