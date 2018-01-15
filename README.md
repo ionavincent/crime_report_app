@@ -11,7 +11,9 @@ The REST API written with in Python using Flask and SQLAlchemy.
 
 The app is setup to run in a docker container. After cloning the repo, you
 can start it by running
-`make docker-run` from the project directory.
+`make docker-run ZIP_FILE=data.zip` from the project directory where `data.zip` is a ZIP file downloaded from [https://data.police.uk/data/](https://data.police.uk/data/).
+
+*Note*: The ZIP file has to reside in the project directory.
 
 Once the app is running, the web app can be accessed at:
 

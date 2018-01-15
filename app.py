@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 
 from config import configure_app
@@ -28,5 +30,8 @@ def init_app(app, config_type):
 
 
 if __name__ == "__main__":
-    init_app(app, "default")
+    if os.environ.get("USING_DOCKER"):
+        init_app(app, "docker")
+    else:
+        init_app(app, "default")
     app.run(host="0.0.0.0", port=8080)

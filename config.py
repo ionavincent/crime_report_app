@@ -13,10 +13,14 @@ class TestConfig(Config):
 class DefaultConfig(Config):
     TESTING = False
 
+class DockerConfig(Config):
+    SQLALCHEMY_DATABASE_URI = "sqlite:////data/db.sqlite"
+
 
 config = {
     "default": DefaultConfig,
-    "testing": TestConfig
+    "testing": TestConfig,
+    "docker": DockerConfig
 }
 
 

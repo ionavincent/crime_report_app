@@ -2,6 +2,7 @@ import argparse
 import csv
 import io
 import logging
+import os
 import zipfile
 from collections import namedtuple
 
@@ -115,8 +116,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     with app.app_context():
-        configure_app(app, "default")
-        db.init_app(app)
+        if os.environ.get("USING_DOCKER"):
+            configure_app(app, "docker")
+            db.init_app(app)
+            db.drop_all()
+            db.create_all()
+        else:
+            configure_app(app, "default")
+            db.init_app(app)
 
         ingestor = CrimeDataIngestor(db=db)
 
