@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ionavincent/crime_report_app.svg?branch=master)](https://travis-ci.org/ionavincent/crime_report_app)
+
 # Crime Report App
 
 A simple REST API and web app to query, filter and sort crime reports from
