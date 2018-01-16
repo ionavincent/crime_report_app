@@ -5,7 +5,7 @@
 A simple REST API and web app to query, filter and sort crime reports from
 [https://data.police.uk/data/](https://data.police.uk/data/).
 
-The REST API written with in Python using Flask and SQLAlchemy.
+The REST API is written in Python using Flask and SQLAlchemy.
 
 ## Running the App
 
