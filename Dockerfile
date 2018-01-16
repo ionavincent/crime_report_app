@@ -1,4 +1,4 @@
-FROM python:2.7.14-alpine3.7
+FROM python:3.6-alpine3.7
 
 EXPOSE 8080
 
